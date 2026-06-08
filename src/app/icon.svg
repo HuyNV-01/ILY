@@ -1,0 +1,20 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512">
+  <defs>
+    <linearGradient id="love-grad" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" style="stop-color:#f472b6; stop-opacity:1" /> <stop offset="100%" style="stop-color:#e11d48; stop-opacity:1" /> </linearGradient>
+    
+    <filter id="shadow" x="-10%" y="-10%" width="120%" height="120%">
+      <feDropShadow dx="0" dy="15" stdDeviation="15" flood-color="#f472b6" flood-opacity="0.4"/>
+    </filter>
+  </defs>
+
+  <rect width="512" height="512" rx="120" fill="#fdfbf7" />
+
+  <path 
+    d="M256 448l-30.164-27.211C118.718 322.442 48 258.61 48 179.095 48 114.228 97.946 64 162.4 64c36.162 0 70.791 16.746 93.6 43.947C278.809 80.746 313.438 64 349.6 64 414.054 64 464 114.228 464 179.095c0 79.516-70.719 143.348-177.836 241.694L256 448z" 
+    fill="url(#love-grad)" 
+    filter="url(#shadow)"
+  />
+  
+  <path d="M160 120 Q180 120 180 100 Q180 120 200 120 Q180 120 180 140 Q180 120 160 120 Z" fill="#ffffff" opacity="0.8"/>
+</svg>

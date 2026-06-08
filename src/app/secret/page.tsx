@@ -1,4 +1,4 @@
-// app/secret/page.tsx
+
 'use client';
 
 import { useState, useRef, } from 'react';
@@ -10,7 +10,6 @@ export default function SecretMessage() {
   const [isOpened, setIsOpened] = useState(false);
   const cardRef = useRef<HTMLDivElement>(null);
   
-  // Tọa độ của vầng sáng (Spotlight)
   const [mousePosition, setMousePosition] = useState({ x: 50, y: 50 });
 
   const handleOpen = () => {
@@ -18,7 +17,6 @@ export default function SecretMessage() {
       setIsOpened(true);
       
       setTimeout(() => {
-        // Pháo hoa kết hợp trái tim rơi
         confetti({
           particleCount: 100,
           spread: 70,
@@ -26,7 +24,7 @@ export default function SecretMessage() {
           colors: ['#ff69b4', '#ff1493', '#ffc0cb', '#ffffff'],
         });
         
-        // Bắn thêm dải kim tuyến vàng
+        
         confetti({
           particleCount: 50,
           angle: 60,
@@ -45,11 +43,11 @@ export default function SecretMessage() {
     }
   };
 
-  // Hàm tính toán vị trí ngón tay/chuột để di chuyển vầng sáng
+  
   const handlePointerMove = (e: React.MouseEvent | React.TouchEvent) => {
     if (!cardRef.current || !isOpened) return;
     const rect = cardRef.current.getBoundingClientRect();
-    let clientX, clientY;
+    let clientX: number, clientY: number;
 
     if ('touches' in e) {
       clientX = e.touches[0].clientX;
@@ -71,7 +69,6 @@ export default function SecretMessage() {
         className="relative w-full max-w-md h-[550px] sm:h-[600px] z-10" 
         style={{ perspective: '1200px' }}
       >
-        {/* ================= MẶT TRƯỚC (BÌA THƯ BÍ MẬT) ================= */}
         <motion.div
           className={`absolute inset-0 w-full h-full bg-gradient-to-br from-pink-500 via-red-400 to-pink-500 rounded-[2rem] flex flex-col items-center justify-center p-8 border-4 border-white/30 overflow-hidden outline-none ${!isOpened ? 'cursor-pointer hover:drop-shadow-2xl' : 'pointer-events-none'}`}
           style={{ backfaceVisibility: 'hidden', WebkitBackfaceVisibility: 'hidden', backgroundSize: '200% 200%' }}
@@ -79,7 +76,7 @@ export default function SecretMessage() {
           animate={{ 
             rotateY: isOpened ? 180 : 0,
             zIndex: isOpened ? 0 : 10,
-            backgroundPosition: ['0% 50%', '100% 50%', '0% 50%'] // Hiệu ứng dải màu trôi dạt
+            backgroundPosition: ['0% 50%', '100% 50%', '0% 50%'] 
           }}
           transition={{ 
             rotateY: { duration: 1.4, type: 'spring', bounce: 0.3 },
@@ -87,7 +84,6 @@ export default function SecretMessage() {
           }}
           onClick={handleOpen}
         >
-          {/* Vòng tròn lan tỏa (Ripple Effect) đằng sau ổ khóa */}
           <div className="absolute inset-0 flex items-center justify-center pointer-events-none">
              <motion.div 
                animate={{ scale: [1, 2.5], opacity: [0.5, 0] }}
@@ -127,7 +123,6 @@ export default function SecretMessage() {
           </div>
         </motion.div>
 
-        {/* ================= MẶT SAU (BỨC TÂM THƯ KỸ XẢO) ================= */}
         <motion.div
           ref={cardRef}
           onMouseMove={handlePointerMove}
@@ -136,7 +131,7 @@ export default function SecretMessage() {
           style={{ 
             backfaceVisibility: 'hidden', 
             WebkitBackfaceVisibility: 'hidden',
-            // Tạo vầng sáng đi theo ngón tay
+            
             background: `radial-gradient(circle 250px at ${mousePosition.x}% ${mousePosition.y}%, rgba(253, 224, 71, 0.15), #fffefc 40%)`
           }}
           initial={{ rotateY: -180 }}
@@ -156,7 +151,8 @@ export default function SecretMessage() {
           <div className="relative z-10 flex flex-col h-full">
             {/* Header: Trái tim được vẽ bằng nét SVG (Draw Line Animation) */}
             <div className="flex justify-center mb-4 mt-2">
-              <svg width="60" height="60" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+              <svg width="60" height="60" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg" role="img" aria-labelledby="heartIconTitle">
+                <title id="heartIconTitle">Decorative heart shape</title>
                 <motion.path
                   d="M12 21.35L10.55 20.03C5.4 15.36 2 12.28 2 8.5C2 5.42 4.42 3 7.5 3C9.24 3 10.91 3.81 12 5.09C13.09 3.81 14.76 3 16.5 3C19.58 3 22 5.42 22 8.5C22 12.28 18.6 15.36 13.45 20.04L12 21.35Z"
                   stroke="url(#gold-gradient)"
@@ -188,7 +184,6 @@ export default function SecretMessage() {
               Gửi em, cô gái nhỏ!
             </motion.h1>
 
-            {/* Nội dung Thư: Hiệu ứng chữ hiện lên từ sương mù */}
             <div className={`flex-1 overflow-y-auto pr-2 custom-scrollbar ${isOpened ? 'cursor-auto' : 'pointer-events-none'}`}>
               <motion.p 
                 initial={{ opacity: 0, filter: 'blur(4px)' }}
@@ -209,7 +204,6 @@ export default function SecretMessage() {
               </motion.p>
             </div>
 
-            {/* Chữ ký & Lời kết nảy lên */}
             <motion.div
               initial={{ opacity: 0, scale: 0.5, y: 20 }}
               animate={isOpened ? { opacity: 1, scale: 1, y: 0 } : {}}
@@ -229,7 +223,8 @@ export default function SecretMessage() {
         .custom-scrollbar::-webkit-scrollbar { width: 4px; }
         .custom-scrollbar::-webkit-scrollbar-track { background: transparent; }
         .custom-scrollbar::-webkit-scrollbar-thumb { background: #fbcfe8; border-radius: 10px; }
-      `}</style>
+      `}
+      </style>
     </main>
   );
 }

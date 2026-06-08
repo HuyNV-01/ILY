@@ -1,4 +1,5 @@
 // app/confession/page.tsx
+/** biome-ignore-all lint/suspicious/noArrayIndexKey: <explanation> */
 'use client';
 
 import { useState, useEffect, useRef } from 'react';

@@ -1,3 +1,4 @@
+/** biome-ignore-all lint/suspicious/noArrayIndexKey: <explanation> */
 'use client';
 
 import { motion } from 'framer-motion';
@@ -13,7 +14,7 @@ export default function FloatingBackground() {
   useEffect(() => {
     setMounted(true);
 
-    // Hiệu ứng Parallax (Thị sai)
+    
     const handleMouseMove = (e: MouseEvent) => {
       const x = (e.clientX / window.innerWidth - 0.5) * 30;
       const y = (e.clientY / window.innerHeight - 0.5) * 30;
@@ -35,14 +36,14 @@ export default function FloatingBackground() {
     }
   };
 
-  // 1. LỚP ÁNH SÁNG NỀN MƠ MÀNG (Tăng nhẹ độ sáng để rực rỡ hơn)
+  
   const glowingOrbs = [
     { id: 'orb1', color: 'bg-pink-400', size: 'w-72 h-72', top: '-5%', left: '-5%', delay: 0 },
     { id: 'orb2', color: 'bg-rose-300', size: 'w-[500px] h-[500px]', top: '30%', left: '60%', delay: 2 },
     { id: 'orb3', color: 'bg-sky-200', size: 'w-80 h-80', top: '70%', left: '5%', delay: 4 },
   ];
 
-  // 2. LỚP NHÂN VẬT & VẬT PHẨM
+  
   const characters = [
     { id: 'char1', emoji: '🧸', size: 'text-5xl', top: '15%', left: '8%', delay: 0, duration: 15 },
     { id: 'char2', emoji: '🐰', size: 'text-4xl', top: '75%', left: '85%', delay: 2, duration: 18 },
@@ -52,7 +53,7 @@ export default function FloatingBackground() {
     { id: 'char6', emoji: '🌷', size: 'text-3xl', top: '85%', left: '45%', delay: 3, duration: 14 },
   ];
 
-  // 3. LỚP HẠT LẤP LÁNH & TRÁI TIM
+  
   const particles = [
     { id: 'p1', Icon: Heart, size: 32, color: 'text-pink-500', top: '20%', left: '20%', delay: 0, blur: 'blur-0', opacity: 'opacity-60' },
     { id: 'p2', Icon: Sparkles, size: 28, color: 'text-yellow-500', top: '15%', left: '75%', delay: 1, blur: 'blur-0', opacity: 'opacity-80' },
@@ -67,7 +68,6 @@ export default function FloatingBackground() {
     <>
       <div className="fixed inset-0 pointer-events-none z-0 overflow-hidden bg-gradient-to-b from-[#fdfbf7] via-[#fff0f5] to-[#fdfbf7]">
         
-        {/* LỚP ÁNH SÁNG NỀN */}
         {glowingOrbs.map((orb) => (
           <motion.div
             key={orb.id}
@@ -82,7 +82,6 @@ export default function FloatingBackground() {
           />
         ))}
 
-        {/* LỚP ĐOM ĐÓM PHÉP THUẬT */}
         {[...Array(15)].map((_, i) => (
           <motion.div
             key={`dust-${i}`}
@@ -102,7 +101,6 @@ export default function FloatingBackground() {
           />
         ))}
 
-        {/* LỚP NHÂN VẬT DỄ THƯƠNG */}
         {characters.map((char) => (
           <motion.div
             key={char.id}
@@ -119,7 +117,6 @@ export default function FloatingBackground() {
           </motion.div>
         ))}
 
-        {/* LỚP HẠT LẤP LÁNH */}
         {particles.map((el) => (
           <motion.div
             key={el.id}
@@ -137,7 +134,6 @@ export default function FloatingBackground() {
           </motion.div>
         ))}
         
-        {/* HIỆU ỨNG CÁNH HOA RƠI */}
         {[...Array(8)].map((_, i) => (
           <motion.div
             key={`petal-${i}`}
@@ -148,35 +144,30 @@ export default function FloatingBackground() {
           />
         ))}
 
-        {/* ========================================================= */}
-        {/* HIỆU ỨNG SAO BĂNG ĐIỆN ẢNH (ĐÃ NÂNG CẤP ĐỘ "WOW")        */}
-        {/* ========================================================= */}
         {[...Array(4)].map((_, i) => (
           <motion.div
             key={`star-${i}`}
-            // Dùng Flexbox để ghép "Đầu sáng" và "Đuôi gradient" lại với nhau
+            
             className="absolute flex items-center pointer-events-none"
             initial={{ 
-              top: `${-10 + Math.random() * 30}%`, // Bắt đầu ở cạnh trên 
-              left: `${80 + Math.random() * 40}%`, // Bắt đầu ở cạnh phải
-              rotate: -35 - Math.random() * 10,    // Góc nghiêng xéo xuống dưới trái
+              top: `${-10 + Math.random() * 30}%`, 
+              left: `${80 + Math.random() * 40}%`, 
+              rotate: -35 - Math.random() * 10,    
             }}
             animate={{ 
-              top: `${100 + Math.random() * 20}%`,  // Bay tuột xuống đáy màn hình
-              left: `${-20 - Math.random() * 20}%`, // Bay tuột qua trái màn hình
-              opacity: [0, 1, 1, 0] // Mờ -> Hiện rõ -> Mờ dần khi biến mất
+              top: `${100 + Math.random() * 20}%`,  
+              left: `${-20 - Math.random() * 20}%`, 
+              opacity: [0, 1, 1, 0] 
             }}
             transition={{ 
-              duration: 2 + Math.random() * 1.5, // Chậm lại một chút để dễ chiêm ngưỡng
+              duration: 2 + Math.random() * 1.5, 
               repeat: Infinity, 
-              repeatDelay: 1 + Math.random() * 5, // Cứ 1-6s lại có một sao băng xẹt qua
+              repeatDelay: 1 + Math.random() * 5, 
               ease: "linear" 
             }}
           >
-            {/* ĐẦU SAO BĂNG: Cục sáng tròn rực rỡ màu hồng/trắng */}
             <div className="w-2 h-2 sm:w-3 sm:h-3 bg-white rounded-full shadow-[0_0_20px_6px_#f472b6] z-10" />
             
-            {/* ĐUÔI SAO BĂNG: Dải gradient dài thòng, nhạt dần về sau */}
             <div className="h-[2px] sm:h-[3px] w-[200px] sm:w-[300px] bg-gradient-to-l from-transparent via-pink-400 to-white -ml-[2px]" />
           </motion.div>
         ))}
@@ -184,7 +175,9 @@ export default function FloatingBackground() {
 
       {/* TRÌNH PHÁT NHẠC NỀN GÓC MÀN HÌNH */}
       <div className="fixed top-6 right-6 z-50">
-        <audio ref={audioRef} src="/bgm.mp3" loop />
+        <audio ref={audioRef} src="/bgm.mp3" loop>
+          <track kind="captions" src="/bgm-captions.vtt" srcLang="en" label="English" />
+        </audio>
         <motion.button
           onClick={toggleMusic}
           whileHover={{ scale: 1.1 }}
