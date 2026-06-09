@@ -12,13 +12,13 @@ export async function POST() {
       },
     });
 
-    const emailCoAy = 'huynv020111@gmail.com'; 
+    const emailCoAy = 'nguyenhue220625@gmail.com'; 
     const emailCuaAnh = process.env.EMAIL_USER;
 
     const mailOptions = {
-      from: `"Chuyến Xe Hạnh Phúc" <${process.env.EMAIL_USER}>`,
+      from: `"Hành Trình Hạnh Phúc" <${process.env.EMAIL_USER}>`,
       to: [emailCuaAnh, emailCoAy].join(', '), 
-      subject: '🎉 Thông báo khẩn: Hành khách VIP đã lên xe!',
+      subject: '🎉 Thông báo khẩn: Nhân vật VIP đã lên chuyến hành trình!',
       html: `
         <div style="font-family: sans-serif; max-width: 600px; margin: auto; padding: 20px; border: 2px dashed #fbcfe8; border-radius: 15px; background-color: #fdfbf7;">
           <h2 style="color: #db2777; text-align: center;">Xác nhận vé VIP thành công! 🎟️💖</h2>
@@ -32,7 +32,7 @@ export async function POST() {
             Hai con người, hai trái tim, một hành trình. Hãy cùng nhau viết nên câu chuyện tình yêu đẹp nhất!
           </p>
 
-          <div style="margin: 35px auto; max-width: 400px; background: linear-gradient(to bottom right, #fff0f5, #fce7f3); border: 2px solid #fbcfe8; border-radius: 20px; padding: 25px 20px; text-align: center; box-shadow: 0 8px 15px rgba(251, 207, 232, 0.4);">
+          <div style="margin: 35px auto; max-width: 400px; background: linear-gradient(to bottom right, #fff0f5, #fce7f3); border: 2px solid #fbcfe8; border-radius: 20px; padding: 25px 20px; text-align: center; box-shadow: 0 8px 15px rgba(251, 207, 232, 0.4);;">
             
             <div style="margin-bottom: 15px;">
               <p style="margin: 0; font-size: 22px; color: #be185d; font-weight: bold; font-family: 'Georgia', serif; text-shadow: 1px 1px 2px rgba(0,0,0,0.05);">
