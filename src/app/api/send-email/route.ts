@@ -44,7 +44,6 @@ export async function POST() {
             </div>
 
             <div style="margin: 15px 0; position: relative;">
-              <div style="position: absolute; top: 50%; left: 0; right: 0; height: 1px; background-color: #fbcfe8; z-index: 1;"></div>
               <span style="position: relative; z-index: 2; background-color: #fce7f3; padding: 0 15px; font-size: 28px;">
                 💞
               </span>
