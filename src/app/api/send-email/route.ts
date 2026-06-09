@@ -12,7 +12,7 @@ export async function POST() {
       },
     });
 
-    const emailCoAy = 'email_cua_co_ay@gmail.com'; 
+    const emailCoAy = 'huynv020111@gmail.com'; 
     const emailCuaAnh = process.env.EMAIL_USER;
 
     const mailOptions = {
@@ -25,7 +25,7 @@ export async function POST() {
           
           <p style="color: #374151; font-size: 16px; line-height: 1.6; text-align: justify;">
             Chào hai bạn,<br><br>
-            Hệ thống xin trân trọng thông báo: Hành khách VIP đã chính thức ấn nút <b>"Đồng ý"</b>. Chuyến xe hạnh phúc của hai bạn đã chính thức lăn bánh!
+            Hệ thống xin trân trọng thông báo: Nhân vật VIP đã chính thức ấn nút <b>"Đồng ý"</b>. Hành trình hạnh phúc của hai bạn đã chính thức bắt đầu!
             <br><br>
             Hãy chuẩn bị tinh thần cho một hành trình đầy ắp yêu thương, tiếng cười và những khoảnh khắc ngọt ngào bên nhau nhé! 🚀💕
             <br><br>
@@ -66,7 +66,7 @@ export async function POST() {
           </div>
           
           <p style="color: #374151; font-size: 16px; font-style: italic; text-align: center;">
-            "Chúc hai bạn có một hành trình thật tuyệt vời, luôn nắm chặt tay nhau đi qua mọi giông bão nhé!"
+            "Chúc cả hai có một hành trình thật tuyệt vời, luôn nắm chặt tay nhau đi qua mọi giông bão nhé!"
           </p>
         </div>
       `,
