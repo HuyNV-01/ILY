@@ -27,7 +27,6 @@ export default function Home() {
       <AnimatePresence>
         {isLaunching && (
           <>
-            {/* Chiếc tên lửa */}
             <motion.div
               initial={{ y: '100vh', x: '-50%', scale: 0.5, rotate: -45 }}
               animate={{

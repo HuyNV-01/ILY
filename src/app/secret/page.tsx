@@ -141,7 +141,6 @@ export default function SecretMessage() {
           }}
           transition={{ duration: 1.4, type: 'spring', bounce: 0.3 }}
         >
-          {/* Overlay Vàng hồng óng ánh (Gold Foil) lướt qua thẻ */}
           <motion.div 
             className="absolute inset-0 opacity-30 pointer-events-none mix-blend-color-dodge bg-gradient-to-tr from-transparent via-pink-200 to-transparent"
             animate={{ x: ['-200%', '200%'] }}
@@ -149,7 +148,6 @@ export default function SecretMessage() {
           />
 
           <div className="relative z-10 flex flex-col h-full">
-            {/* Header: Trái tim được vẽ bằng nét SVG (Draw Line Animation) */}
             <div className="flex justify-center mb-4 mt-2">
               <svg width="60" height="60" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg" role="img" aria-labelledby="heartIconTitle">
                 <title id="heartIconTitle">Decorative heart shape</title>
@@ -191,7 +189,7 @@ export default function SecretMessage() {
                 transition={{ delay: 3, duration: 1.5 }}
                 className="text-gray-700 font-serif text-[17px] sm:text-[18px] leading-[1.9] text-justify"
               >
-                Cảm ơn em vì đã bước vào thế giới nhỏ này của anh và đồng ý trở thành hành khách VIP trên chuyến xe này. Quãng đường phía trước còn dài, nhưng anh sẽ luôn nắm chặt tay em.
+                Cảm ơn em vì đã bước vào thế giới nhỏ này của anh và đồng ý trở thành nhân vật VIP trên chuyến hành trình này. Quãng đường phía trước còn dài, nhưng anh sẽ luôn nắm chặt tay em.
               </motion.p>
               
               <motion.p 
@@ -211,7 +209,7 @@ export default function SecretMessage() {
               className="mt-6 pt-5 border-t border-dashed border-pink-300 flex flex-col items-center bg-gradient-to-r from-transparent via-pink-50 to-transparent relative z-10"
             >
               <div className="flex items-center gap-2 text-pink-600 font-bold text-xl font-serif">
-                <span>Yêu em nhiều lắm!</span>
+                <span>Yêu em nhiều hơn mỗi ngày!</span>
                 <Heart className="w-6 h-6 fill-pink-500 animate-pulse drop-shadow-md" />
               </div>
             </motion.div>

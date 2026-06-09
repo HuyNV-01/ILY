@@ -1,4 +1,3 @@
-// app/confession/page.tsx
 /** biome-ignore-all lint/suspicious/noArrayIndexKey: <explanation> */
 'use client';
 
@@ -12,10 +11,10 @@ const STORY_LINES = [
   "Từ những câu chào hỏi đầu tiên, anh đã thấy có điều gì đó rất đặc biệt... ✨",
   "Anh nhận ra mình bắt đầu để ý đến những câu chuyện và thói quen nhỏ của em. Anh thích nghe em kể về ngày của mình, dù chỉ là những chuyện nhỏ nhặt nhất. 😊",
   "Trên thế giới rộng lớn này, có rất nhiều thứ ngôn ngữ khác nhau. Mỗi người đều sở hữu một thứ ngôn ngữ riêng thể hiện tình cảm. Và anh duy nhất muốn biết, muốn hiểu và giữ lấy em và cả thứ ngôn ngữ đó của em cho riêng mình 💖",
-  "Mỗi ngày được trò chuyện cùng em là một ngày vui của anh. 😊",
+  "Mỗi ngày được trò chuyện cùng em là một ngày vui của anh. Mỗi lần nhìn thấy em, anh lại cảm thấy hạnh phúc hơn. 😊",
   "Anh không giỏi ăn nói, hay vụng về, cũng không biết làm ảo thuật, đôi lúc anh còn chọc em cáu... 🎩",
-  "Nhưng anh vẫn luôn ở đây, lắng nghe và bên cạnh em mỗi khi em buồn hay vui. Ai cũng có những câu chuyện, nhưng em hãy tin tưởng anh hơn mỗi ngày nhé! 🥰",
-  "Chuyến xe bus cuộc đời anh đang thiếu một hành khách VIP... Anh muốn mời em lên cùng anh, để chúng ta cùng nhau trải nghiệm những cung đường mới. Anh sẽ luôn bên cạnh em dù trời nắng hay mưa, đi cùng em trên mọi nẻo đường. 🚍",
+  "Nhưng anh vẫn luôn ở đây, lắng nghe và bên cạnh em mỗi khi em buồn hay vui. Ai cũng có những câu chuyện, nhưng em hãy tin tưởng anh hơn mỗi ngày nhé! Để anh được quan tâm, lo lắng, sẻ chia và yêu thương em nhiều hơn nha! 🥰",
+  "Chuyến hàng trình của cuộc đời anh đang thiếu một vị nhân vật VIP... Anh muốn mời em lên cùng anh, để chúng ta cùng nhau trải nghiệm những cung đường mới. Anh sẽ luôn bên cạnh em dù trời nắng hay mưa, đi cùng em trên mọi nẻo đường. 🚍",
   "Em làm người yêu anh nhé? 💖"
 ];
 
@@ -23,13 +22,13 @@ const sentenceVariants = {
   hidden: { opacity: 1 },
   visible: {
     opacity: 1,
-    transition: { delayChildren: 0.1, staggerChildren: 0.04 }, // Tốc độ viết chữ
+    transition: { delayChildren: 0.1, staggerChildren: 0.04 },
   },
 };
 
 const letterVariants = {
   hidden: { opacity: 0 },
-  visible: { opacity: 1 }, // Bỏ y: 5 đi để chữ không bị lệch khỏi dòng kẻ khi xuất hiện
+  visible: { opacity: 1 }, 
 };
 
 // Component trang trí xung quanh màn hình
@@ -126,21 +125,17 @@ export default function Confession() {
               </div>
             </div>
 
-            {/* Phần giấy viết nội dung */}
             <div className="flex-1 p-6 sm:p-10 relative">
-              {/* Tiêu đề trang giấy */}
               <div className="flex justify-between items-end border-b-2 border-pink-200 pb-2 mb-6">
                 <h2 className="text-xl sm:text-2xl font-serif italic text-pink-500 font-bold">Gửi em...</h2>
                 <span className="text-xs sm:text-sm text-gray-400 font-mono">Trang {step + 1}/{STORY_LINES.length}</span>
               </div>
 
-              {/* Khu vực kẻ dòng và chạy chữ */}
               <div 
                 className="min-h-[160px] sm:min-h-[200px] text-lg sm:text-xl text-gray-700 font-serif"
                 style={{
-                  // Tạo hiệu ứng dòng kẻ ngang giấy vở (36px là khoảng cách 1 dòng)
                   backgroundImage: 'repeating-linear-gradient(transparent, transparent 35px, #e2e8f0 35px, #e2e8f0 36px)',
-                  lineHeight: '36px', // Quan trọng: Khoảng cách dòng chữ phải khớp bằng khoảng cách line
+                  lineHeight: '36px',
                   backgroundAttachment: 'local'
                 }}
               >
@@ -150,7 +145,7 @@ export default function Confession() {
                   initial="hidden"
                   animate="visible"
                   onAnimationComplete={() => setIsTyping(false)}
-                  className="inline" // Dùng inline để text trôi tự nhiên trên dòng kẻ
+                  className="inline"
                 >
                   {STORY_LINES[step].split("").map((char, index) => (
                     <motion.span key={`${step}-${index}`} variants={letterVariants}>
@@ -160,7 +155,6 @@ export default function Confession() {
                 </motion.p>
               </div>
 
-              {/* Nút bấm ở góc phải dưới của trang giấy */}
               <div className="flex justify-end mt-8">
                 {!isLastStep ? (
                   <motion.button
@@ -206,24 +200,19 @@ export default function Confession() {
             transition={{ duration: 0.8, type: "spring", bounce: 0.4 }}
             className="relative w-full max-w-sm bg-white rounded-3xl shadow-2xl overflow-hidden border border-pink-100 z-10"
           >
-            {/* Background trang trí chìm bên trong vé */}
             <div className="absolute top-0 right-0 w-32 h-32 bg-pink-200 rounded-full blur-3xl opacity-50 mix-blend-multiply translate-x-10 -translate-y-10" />
             <div className="absolute bottom-0 left-0 w-32 h-32 bg-sky-200 rounded-full blur-3xl opacity-50 mix-blend-multiply -translate-x-10 translate-y-10" />
 
-            {/* Phần Header của Vé (Màu hồng) */}
             <div className="bg-gradient-to-r from-pink-400 to-pink-500 p-6 text-center text-white relative shadow-sm">
               <h2 className="text-3xl font-bold tracking-widest uppercase font-sans">VIP PASS</h2>
               <p className="text-pink-100 text-sm font-medium mt-1 uppercase tracking-wider">Chuyến Xe Hạnh Phúc 🚍</p>
               
-              {/* Lỗ khuyết 2 bên vé (cùng màu với background nền #fdfbf7) */}
               <div className="absolute -bottom-4 -left-4 w-8 h-8 bg-[#fdfbf7] rounded-full shadow-inner" />
               <div className="absolute -bottom-4 -right-4 w-8 h-8 bg-[#fdfbf7] rounded-full shadow-inner" />
             </div>
 
-            {/* Phần Body nội dung vé */}
             <div className="p-8 pt-10 pb-6 relative bg-[radial-gradient(#fecdd3_1.5px,transparent_1.5px)] [background-size:20px_20px]">
               
-              {/* Hiệu ứng Dấu mộc (Stamp) đóng xuống */}
               <motion.div
                 initial={{ opacity: 0, scale: 4, rotate: -30 }}
                 animate={{ opacity: 1, scale: 1, rotate: -15 }}
@@ -289,7 +278,7 @@ export default function Confession() {
                     value={qrUrl} 
                     size={70} 
                     bgColor="transparent" 
-                    fgColor="#db2777" // Màu pink-600
+                    fgColor="#db2777" 
                     level="L"
                   />
                 ) : (
