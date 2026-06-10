@@ -12,7 +12,10 @@ export default function FloatingBackground() {
   const [isPlaying, setIsPlaying] = useState(false);
   
   const audioRef = useRef<HTMLAudioElement | null>(null);
-  const isUnlockedRef = useRef(false); // Ref để theo dõi xem âm thanh đã được cấp quyền chưa
+  const isUnlockedRef = useRef(false);
+  
+  // Ref để đảm bảo Ampli chỉ được lắp đặt 1 lần duy nhất
+  const isAmplifiedRef = useRef(false); 
 
   useEffect(() => {
     setMounted(true);
@@ -28,10 +31,7 @@ export default function FloatingBackground() {
     const audio = audioRef.current;
     
     if (audio) {
-      audio.volume = 0.5;
-
-      audio.play().catch(() => {
-      });
+      audio.play().catch(() => {});
 
       const unlockAudio = (e: Event) => {
         if (isUnlockedRef.current) return;
@@ -39,13 +39,41 @@ export default function FloatingBackground() {
         const target = e.target as HTMLElement;
         if (target.closest('.music-toggle-btn')) return;
 
-        isUnlockedRef.current = true; 
+        isUnlockedRef.current = true;
+
+        // =============================================================
+        // KÍCH HOẠT AMPLI KỸ THUẬT SỐ (WEB AUDIO API) ĐỂ KÉO MAX VOLUME
+        // =============================================================
+        if (!isAmplifiedRef.current) {
+          try {
+            // Khởi tạo Audio Context hỗ trợ cả trình duyệt Safari cũ
+            const AudioContext = window.AudioContext || (window as any).webkitAudioContext;
+            const audioCtx = new AudioContext();
+            
+            // Kết nối thẻ <audio> với Ampli
+            const source = audioCtx.createMediaElementSource(audio);
+            const gainNode = audioCtx.createGain();
+
+            // MỨC KHUẾCH ĐẠI: 2.5 có nghĩa là to gấp 2.5 lần bình thường (250%)
+            // Bạn có thể chỉnh lên 3.0 hoặc 4.0 nếu nhạc gốc vẫn quá nhỏ
+            gainNode.gain.value = 2.5; 
+
+            source.connect(gainNode);
+            gainNode.connect(audioCtx.destination);
+            
+            isAmplifiedRef.current = true;
+
+            // Đánh thức Audio Context trên iOS
+            if (audioCtx.state === 'suspended') {
+              audioCtx.resume();
+            }
+          } catch (err) {
+            console.error("Không thể kích hoạt Ampli:", err);
+          }
+        }
 
         if (audio.paused) {
-          const playPromise = audio.play();
-          if (playPromise !== undefined) {
-            playPromise.catch((err) => console.log("Silent unlock failed:", err));
-          }
+          audio.play().catch((err) => console.log("Unlock failed:", err));
         }
 
         document.removeEventListener('touchstart', unlockAudio, { capture: true });
@@ -64,20 +92,31 @@ export default function FloatingBackground() {
   }, []);
 
   const toggleMusic = (e: React.MouseEvent) => {
-    e.preventDefault(); 
+    e.preventDefault();
     
     const audio = audioRef.current;
     if (!audio) return;
 
+    // Đảm bảo Audio Context được đánh thức nếu người dùng bấm thẳng vào nút
+    if (!isAmplifiedRef.current) {
+        try {
+            const AudioContext = window.AudioContext || (window as any).webkitAudioContext;
+            const audioCtx = new AudioContext();
+            const source = audioCtx.createMediaElementSource(audio);
+            const gainNode = audioCtx.createGain();
+            gainNode.gain.value = 2.5; // Khuếch đại 250%
+            source.connect(gainNode);
+            gainNode.connect(audioCtx.destination);
+            isAmplifiedRef.current = true;
+            if (audioCtx.state === 'suspended') audioCtx.resume();
+        } catch (err) {}
+    }
+
     if (audio.paused) {
-      const playPromise = audio.play();
-      if (playPromise !== undefined) {
-        playPromise.catch((err) => {
-          console.error("Nút bấm bị iOS chặn:", err);
-          audio.load();
-          audio.play().catch(e => console.error("Lỗi hoàn toàn:", e));
-        });
-      }
+      audio.play().catch((err) => {
+        audio.load();
+        audio.play().catch(e => console.error("Lỗi:", e));
+      });
     } else {
       audio.pause();
     }
@@ -135,15 +174,19 @@ export default function FloatingBackground() {
       </div>
 
       <div className="fixed top-6 right-6 z-[100] pointer-events-auto">
+        {/* crossorigin="anonymous" là CỰC KỲ QUAN TRỌNG để Web Audio API hoạt động không bị lỗi CORS */}
         <audio 
           ref={audioRef} 
-          src="/bgm.mp3" 
-          playsInline 
           preload="auto" 
+          playsInline
           loop
-          onPlay={() => setIsPlaying(true)} 
+          crossOrigin="anonymous"
+          onPlay={() => setIsPlaying(true)}
           onPause={() => setIsPlaying(false)}
-        />
+        >
+          {/* Bạn nhớ dùng file .m4a hoặc .mp3 mà bạn đang có */}
+          <source src="/bgm.mp3" type="audio/mpeg" />
+        </audio>
         
         <button
           type="button"
