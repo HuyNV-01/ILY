@@ -185,7 +185,7 @@ export default function FloatingBackground() {
           onPause={() => setIsPlaying(false)}
         >
           {/* Bạn nhớ dùng file .m4a hoặc .mp3 mà bạn đang có */}
-          <source src="/bgm.mp3" type="audio/mpeg" />
+          <source src="/bgm.m4a" type="audio/mpeg" />
         </audio>
         
         <button
