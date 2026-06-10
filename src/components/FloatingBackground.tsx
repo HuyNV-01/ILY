@@ -1,5 +1,6 @@
 /** biome-ignore-all lint/a11y/useMediaCaption: <explanation> */
 /** biome-ignore-all lint/suspicious/noArrayIndexKey: <explanation> */
+/** biome-ignore-all lint/a11y/useButtonType: <explanation> */
 'use client';
 
 import { motion } from 'framer-motion';
@@ -23,38 +24,53 @@ export default function FloatingBackground() {
 
     window.addEventListener('mousemove', handleMouseMove);
 
-    // Bẫy âm thanh toàn cục cho iPhone
-    const unlockAudio = () => {
-      const audio = audioRef.current;
-      if (audio && audio.paused) {
-        audio.play().catch(() => {
-          // Bỏ qua lỗi âm thầm nếu trình duyệt vẫn cương quyết chặn
-        });
-      }
-      document.removeEventListener('touchstart', unlockAudio);
-      document.removeEventListener('click', unlockAudio);
-    };
+    // =======================================================
+    // CHIẾN THUẬT "MỞ KHÓA ÂM THANH" CHUẨN MỰC CHO IOS SAFARI
+    // =======================================================
+    const audio = audioRef.current;
+    
+    if (audio) {
+      audio.volume = 0.5;
 
-    document.addEventListener('touchstart', unlockAudio, { once: true });
-    document.addEventListener('click', unlockAudio, { once: true });
+      // Cố gắng tự phát nhạc trên các thiết bị dễ tính (Mac/PC)
+      audio.play().catch(() => {});
 
-    return () => window.removeEventListener('mousemove', handleMouseMove);
+      const unlockAudio = (e: Event) => {
+        // Tránh xung đột nếu người dùng cố tình bấm ngay vào nút bật/tắt nhạc
+        const target = e.target as HTMLElement;
+        if (target.closest('.music-toggle-btn')) return;
+
+        // Nếu nhạc đang tắt, ép phát trực tiếp không qua bất kỳ hàm trung gian nào
+        if (audio.paused) {
+          audio.play().catch(err => console.log("Unlock failed:", err));
+        }
+
+        // Tự hủy bẫy sau khi mở khóa thành công để giải phóng bộ nhớ
+        window.removeEventListener('touchstart', unlockAudio, { capture: true });
+        window.removeEventListener('click', unlockAudio, { capture: true });
+      };
+
+      // Sử dụng { capture: true } để chặn bắt sự kiện ở tầng cao nhất của Window 
+      // trước khi bất kỳ thẻ <div> nào khác kịp chặn lại bằng stopPropagation()
+      window.addEventListener('touchstart', unlockAudio, { capture: true, once: true });
+      window.addEventListener('click', unlockAudio, { capture: true, once: true });
+
+      return () => {
+        window.removeEventListener('mousemove', handleMouseMove);
+        window.removeEventListener('touchstart', unlockAudio, { capture: true });
+        window.removeEventListener('click', unlockAudio, { capture: true });
+      };
+    }
   }, []);
 
-  // Xử lý nút bấm: Trực tiếp điều khiển Audio, KHÔNG set State ở đây nữa
-  const toggleMusic = (e: React.MouseEvent | React.TouchEvent) => {
-    e.stopPropagation(); // Ngăn sự kiện chạm lan ra ngoài gây kẹt với unlockAudio
-    
+  // Hàm nút bấm: Cực kỳ đơn giản và đồng bộ, không dùng Promise phức tạp
+  const toggleMusic = () => {
     const audio = audioRef.current;
     if (!audio) return;
 
     if (audio.paused) {
-      audio.play().catch((err) => {
-        console.error("iOS chặn nút bấm:", err);
-        // Fallback ép load lại dữ liệu nếu iOS làm nghẽn
-        audio.load();
-        audio.play().catch((e) => console.error("Vẫn lỗi:", e));
-      });
+      // Ép phát trực tiếp
+      audio.play().catch((err) => console.error("Không thể bật nhạc:", err));
     } else {
       audio.pause();
     }
@@ -88,6 +104,7 @@ export default function FloatingBackground() {
   return (
     <>
       <div className="fixed inset-0 pointer-events-none z-0 overflow-hidden bg-gradient-to-b from-[#fdfbf7] via-[#fff0f5] to-[#fdfbf7]">
+        
         {glowingOrbs.map((orb) => (
           <motion.div
             key={orb.id}
@@ -163,17 +180,15 @@ export default function FloatingBackground() {
           playsInline 
           preload="auto" 
           loop
-          // ĐÂY LÀ BÍ QUYẾT: Để Audio tự báo cáo trạng thái cho React
           onPlay={() => setIsPlaying(true)}
           onPause={() => setIsPlaying(false)}
         />
         
-        <motion.button
+        <button
           onClick={toggleMusic}
-          whileHover={{ scale: 1.1 }}
-          whileTap={{ scale: 0.9 }}
-          className="flex items-center justify-center w-12 h-12 rounded-full shadow-lg backdrop-blur-md border border-white/40 transition-all cursor-pointer select-none"
-          style={isPlaying ? { backgroundColor: 'rgba(252, 231, 243, 0.9)', color: '#db2777', boxShadow: '0 4px 6px -1px rgba(244, 114, 182, 0.5)' } : { backgroundColor: 'rgba(255, 255, 255, 0.8)', color: '#9ca3af' }}
+          className={`music-toggle-btn flex items-center justify-center w-12 h-12 rounded-full shadow-lg backdrop-blur-md border border-white/40 transition-all cursor-pointer select-none ${
+            isPlaying ? 'bg-[rgba(252,231,243,0.9)] text-[#db2777] shadow-[0_4px_6px_-1px_rgba(244,114,182,0.5)]' : 'bg-[rgba(255,255,255,0.8)] text-[#9ca3af]'
+          }`}
         >
           {isPlaying ? (
             <motion.div animate={{ rotate: 360 }} transition={{ duration: 4, repeat: Infinity, ease: "linear" }}>
@@ -182,7 +197,7 @@ export default function FloatingBackground() {
           ) : (
             <VolumeX className="w-5 h-5" />
           )}
-        </motion.button>
+        </button>
       </div>
     </>
   );
