@@ -1,4 +1,5 @@
 /** biome-ignore-all lint/a11y/useMediaCaption: <explanation> */
+/** biome-ignore-all lint/suspicious/noArrayIndexKey: <explanation> */
 'use client';
 
 import { motion } from 'framer-motion';
@@ -24,27 +25,21 @@ export default function FloatingBackground() {
 
     window.addEventListener('mousemove', handleMouseMove);
 
-    // ========================================================
-    // BỘ MỞ KHÓA ÂM THANH TOÀN CẦU (GLOBAL AUDIO UNLOCKER)
-    // ========================================================
     const audio = audioRef.current;
     
     if (audio) {
       audio.volume = 0.5;
 
-      // Desktop: Cố gắng phát nhạc tự động nếu trình duyệt cho phép
       audio.play().catch(() => {
-        // Mobile/iOS sẽ nhảy vào đây vì bị chặn Autoplay
       });
 
       const unlockAudio = (e: Event) => {
         if (isUnlockedRef.current) return;
 
-        // Tránh xung đột: Nếu người dùng bấm thẳng vào nút Nhạc, để nút Nhạc tự lo
         const target = e.target as HTMLElement;
         if (target.closest('.music-toggle-btn')) return;
 
-        isUnlockedRef.current = true; // Đánh dấu đã mở khóa thành công
+        isUnlockedRef.current = true; 
 
         if (audio.paused) {
           const playPromise = audio.play();
@@ -53,12 +48,10 @@ export default function FloatingBackground() {
           }
         }
 
-        // Dọn dẹp sự kiện để không làm nặng web
         document.removeEventListener('touchstart', unlockAudio, { capture: true });
         document.removeEventListener('click', unlockAudio, { capture: true });
       };
 
-      // Bẫy sự kiện ở lớp cao nhất (capture: true)
       document.addEventListener('touchstart', unlockAudio, { capture: true, passive: true });
       document.addEventListener('click', unlockAudio, { capture: true, passive: true });
 
@@ -70,22 +63,17 @@ export default function FloatingBackground() {
     }
   }, []);
 
-  // ========================================================
-  // XỬ LÝ NÚT BẤM VẬT LÝ TRỰC TIẾP (KHÔNG QUA STATE TRUNG GIAN)
-  // ========================================================
   const toggleMusic = (e: React.MouseEvent) => {
-    e.preventDefault(); // Ngăn chặn các hành vi mặc định của trình duyệt
+    e.preventDefault(); 
     
     const audio = audioRef.current;
     if (!audio) return;
 
     if (audio.paused) {
-      // Thực thi play() trực tiếp ngay trong Event Listener
       const playPromise = audio.play();
       if (playPromise !== undefined) {
         playPromise.catch((err) => {
           console.error("Nút bấm bị iOS chặn:", err);
-          // Phương án cứu cánh cuối cùng cho iOS
           audio.load();
           audio.play().catch(e => console.error("Lỗi hoàn toàn:", e));
         });
@@ -122,7 +110,6 @@ export default function FloatingBackground() {
 
   return (
     <>
-      {/* KHUNG NỀN */}
       <div className="fixed inset-0 pointer-events-none z-0 overflow-hidden bg-gradient-to-b from-[#fdfbf7] via-[#fff0f5] to-[#fdfbf7]">
         {glowingOrbs.map((orb) => (
           <motion.div key={orb.id} className={`absolute rounded-full ${orb.color} ${orb.size} opacity-20 mix-blend-multiply filter blur-[100px]`} style={{ top: orb.top, left: orb.left }} animate={{ x: [0, 40, -40, 0], y: [0, 30, -30, 0], scale: [1, 1.1, 0.9, 1] }} transition={{ duration: 15, repeat: Infinity, delay: orb.delay, ease: "easeInOut" }} />
@@ -147,15 +134,14 @@ export default function FloatingBackground() {
         ))}
       </div>
 
-      {/* KHU VỰC ĐIỀU KHIỂN ÂM THANH */}
       <div className="fixed top-6 right-6 z-[100] pointer-events-auto">
         <audio 
           ref={audioRef} 
           src="/bgm.mp3" 
-          playsInline // Bắt buộc cho iOS
+          playsInline 
           preload="auto" 
           loop
-          onPlay={() => setIsPlaying(true)} // Đồng bộ State 1 chiều
+          onPlay={() => setIsPlaying(true)} 
           onPause={() => setIsPlaying(false)}
         />
         
