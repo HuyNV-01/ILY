@@ -1,4 +1,4 @@
-/** biome-ignore-all lint/suspicious/noArrayIndexKey: <explanation> */
+/** biome-ignore-all lint/a11y/useMediaCaption: <explanation> */
 'use client';
 
 import { motion } from 'framer-motion';
@@ -22,59 +22,40 @@ export default function FloatingBackground() {
 
     window.addEventListener('mousemove', handleMouseMove);
 
-    // ==========================================
-    // LOGIC MỞ KHÓA ÂM THANH CHUẨN CHO IOS/SAFARI
-    // ==========================================
-    const audio = audioRef.current;
-    if (audio) {
-      audio.volume = 0.4;
+    // Bẫy âm thanh toàn cục cho iPhone
+    const unlockAudio = () => {
+      const audio = audioRef.current;
+      if (audio && audio.paused) {
+        audio.play().catch(() => {
+          // Bỏ qua lỗi âm thầm nếu trình duyệt vẫn cương quyết chặn
+        });
+      }
+      document.removeEventListener('touchstart', unlockAudio);
+      document.removeEventListener('click', unlockAudio);
+    };
 
-      // Hàm bẫy tương tác toàn cục
-      const unlockAudio = () => {
-        if (audio.paused) {
-          const playPromise = audio.play();
-          if (playPromise !== undefined) {
-            playPromise
-              .then(() => setIsPlaying(true))
-              .catch((err) => console.log("Unlock failed:", err));
-          }
-        }
-        // Chỉ chạy 1 lần duy nhất rồi tự hủy để không gây lỗi
-        document.removeEventListener('touchstart', unlockAudio);
-        document.removeEventListener('click', unlockAudio);
-      };
-
-      // Gắn bẫy ở mọi nơi
-      document.addEventListener('touchstart', unlockAudio, { once: true });
-      document.addEventListener('click', unlockAudio, { once: true });
-    }
+    document.addEventListener('touchstart', unlockAudio, { once: true });
+    document.addEventListener('click', unlockAudio, { once: true });
 
     return () => window.removeEventListener('mousemove', handleMouseMove);
   }, []);
 
-  // Xử lý khi người dùng CỐ TÌNH ấn vào nút loa
-  const toggleMusic = () => {
+  // Xử lý nút bấm: Trực tiếp điều khiển Audio, KHÔNG set State ở đây nữa
+  const toggleMusic = (e: React.MouseEvent | React.TouchEvent) => {
+    e.stopPropagation(); // Ngăn sự kiện chạm lan ra ngoài gây kẹt với unlockAudio
+    
     const audio = audioRef.current;
     if (!audio) return;
 
-    if (isPlaying) {
-      audio.pause();
-      setIsPlaying(false);
+    if (audio.paused) {
+      audio.play().catch((err) => {
+        console.error("iOS chặn nút bấm:", err);
+        // Fallback ép load lại dữ liệu nếu iOS làm nghẽn
+        audio.load();
+        audio.play().catch((e) => console.error("Vẫn lỗi:", e));
+      });
     } else {
-      // Cố gắng phát nhạc
-      const playPromise = audio.play();
-      if (playPromise !== undefined) {
-        playPromise
-          .then(() => setIsPlaying(true))
-          .catch((err) => {
-            console.error("iOS chặn phát nhạc:", err);
-            // Kỹ thuật Fallback cho iOS: Bắt load lại luồng dữ liệu rồi mới phát
-            audio.load();
-            audio.play()
-              .then(() => setIsPlaying(true))
-              .catch((e) => console.error("Vẫn không phát được:", e));
-          });
-      }
+      audio.pause();
     }
   };
 
@@ -174,18 +155,26 @@ export default function FloatingBackground() {
         ))}
       </div>
 
-      <div className="fixed top-6 right-6 z-50">
-        {/* ĐÃ THÊM: playsInline và preload="auto" để trị bệnh iOS */}
-        <audio ref={audioRef} src="/bgm.mp3" playsInline preload="auto" loop>
-          <track kind="captions" src="/bgm-captions.vtt" srcLang="en" label="English" />
-        </audio>
+      <div className="fixed top-6 right-6 z-[100]">
+        <audio 
+          ref={audioRef} 
+          src="/bgm.mp3" 
+          playsInline 
+          preload="auto" 
+          loop
+          // ĐÂY LÀ BÍ QUYẾT: Để Audio tự báo cáo trạng thái cho React
+          onPlay={() => setIsPlaying(true)}
+          onPause={() => setIsPlaying(false)}
+        />
         
         <motion.button
           onClick={toggleMusic}
+          // Thêm onTouchEnd để tương tác trên iPhone nhạy hơn
+          onTouchEnd={toggleMusic}
           whileHover={{ scale: 1.1 }}
           whileTap={{ scale: 0.9 }}
-          className="flex items-center justify-center w-12 h-12 rounded-full shadow-lg backdrop-blur-md border border-white/40 transition-all cursor-pointer"
-          style={isPlaying ? { backgroundColor: 'rgba(252, 231, 243, 0.9)', color: '#db2777', boxShadow: '0 4px 6px -1px rgba(244, 114, 182, 0.5)' } : { backgroundColor: 'rgba(255, 255, 255, 0.6)', color: '#6b7280' }}
+          className="flex items-center justify-center w-12 h-12 rounded-full shadow-lg backdrop-blur-md border border-white/40 transition-all cursor-pointer select-none"
+          style={isPlaying ? { backgroundColor: 'rgba(252, 231, 243, 0.9)', color: '#db2777', boxShadow: '0 4px 6px -1px rgba(244, 114, 182, 0.5)' } : { backgroundColor: 'rgba(255, 255, 255, 0.8)', color: '#9ca3af' }}
         >
           {isPlaying ? (
             <motion.div animate={{ rotate: 360 }} transition={{ duration: 4, repeat: Infinity, ease: "linear" }}>
