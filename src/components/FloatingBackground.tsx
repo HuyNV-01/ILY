@@ -1,4 +1,5 @@
 /** biome-ignore-all lint/a11y/useMediaCaption: <explanation> */
+/** biome-ignore-all lint/suspicious/noArrayIndexKey: <explanation> */
 'use client';
 
 import { motion } from 'framer-motion';
@@ -169,8 +170,6 @@ export default function FloatingBackground() {
         
         <motion.button
           onClick={toggleMusic}
-          // Thêm onTouchEnd để tương tác trên iPhone nhạy hơn
-          onTouchEnd={toggleMusic}
           whileHover={{ scale: 1.1 }}
           whileTap={{ scale: 0.9 }}
           className="flex items-center justify-center w-12 h-12 rounded-full shadow-lg backdrop-blur-md border border-white/40 transition-all cursor-pointer select-none"
