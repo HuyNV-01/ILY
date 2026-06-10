@@ -14,7 +14,6 @@ export default function FloatingBackground() {
   useEffect(() => {
     setMounted(true);
 
-    
     const handleMouseMove = (e: MouseEvent) => {
       const x = (e.clientX / window.innerWidth - 0.5) * 30;
       const y = (e.clientY / window.innerHeight - 0.5) * 30;
@@ -22,28 +21,69 @@ export default function FloatingBackground() {
     };
 
     window.addEventListener('mousemove', handleMouseMove);
+
+    // ==========================================
+    // LOGIC MỞ KHÓA ÂM THANH CHUẨN CHO IOS/SAFARI
+    // ==========================================
+    const audio = audioRef.current;
+    if (audio) {
+      audio.volume = 0.4;
+
+      // Hàm bẫy tương tác toàn cục
+      const unlockAudio = () => {
+        if (audio.paused) {
+          const playPromise = audio.play();
+          if (playPromise !== undefined) {
+            playPromise
+              .then(() => setIsPlaying(true))
+              .catch((err) => console.log("Unlock failed:", err));
+          }
+        }
+        // Chỉ chạy 1 lần duy nhất rồi tự hủy để không gây lỗi
+        document.removeEventListener('touchstart', unlockAudio);
+        document.removeEventListener('click', unlockAudio);
+      };
+
+      // Gắn bẫy ở mọi nơi
+      document.addEventListener('touchstart', unlockAudio, { once: true });
+      document.addEventListener('click', unlockAudio, { once: true });
+    }
+
     return () => window.removeEventListener('mousemove', handleMouseMove);
   }, []);
 
+  // Xử lý khi người dùng CỐ TÌNH ấn vào nút loa
   const toggleMusic = () => {
-    if (audioRef.current) {
-      if (isPlaying) {
-        audioRef.current.pause();
-      } else {
-        audioRef.current.play();
+    const audio = audioRef.current;
+    if (!audio) return;
+
+    if (isPlaying) {
+      audio.pause();
+      setIsPlaying(false);
+    } else {
+      // Cố gắng phát nhạc
+      const playPromise = audio.play();
+      if (playPromise !== undefined) {
+        playPromise
+          .then(() => setIsPlaying(true))
+          .catch((err) => {
+            console.error("iOS chặn phát nhạc:", err);
+            // Kỹ thuật Fallback cho iOS: Bắt load lại luồng dữ liệu rồi mới phát
+            audio.load();
+            audio.play()
+              .then(() => setIsPlaying(true))
+              .catch((e) => console.error("Vẫn không phát được:", e));
+          });
       }
-      setIsPlaying(!isPlaying);
     }
   };
 
-  
   const glowingOrbs = [
     { id: 'orb1', color: 'bg-pink-400', size: 'w-72 h-72', top: '-5%', left: '-5%', delay: 0 },
     { id: 'orb2', color: 'bg-rose-300', size: 'w-[500px] h-[500px]', top: '30%', left: '60%', delay: 2 },
     { id: 'orb3', color: 'bg-sky-200', size: 'w-80 h-80', top: '70%', left: '5%', delay: 4 },
   ];
 
-  
   const characters = [
     { id: 'char1', emoji: '🧸', size: 'text-5xl', top: '15%', left: '8%', delay: 0, duration: 15 },
     { id: 'char2', emoji: '🐰', size: 'text-4xl', top: '75%', left: '85%', delay: 2, duration: 18 },
@@ -53,7 +93,6 @@ export default function FloatingBackground() {
     { id: 'char6', emoji: '🌷', size: 'text-3xl', top: '85%', left: '45%', delay: 3, duration: 14 },
   ];
 
-  
   const particles = [
     { id: 'p1', Icon: Heart, size: 32, color: 'text-pink-500', top: '20%', left: '20%', delay: 0, blur: 'blur-0', opacity: 'opacity-60' },
     { id: 'p2', Icon: Sparkles, size: 28, color: 'text-yellow-500', top: '15%', left: '75%', delay: 1, blur: 'blur-0', opacity: 'opacity-80' },
@@ -67,17 +106,12 @@ export default function FloatingBackground() {
   return (
     <>
       <div className="fixed inset-0 pointer-events-none z-0 overflow-hidden bg-gradient-to-b from-[#fdfbf7] via-[#fff0f5] to-[#fdfbf7]">
-        
         {glowingOrbs.map((orb) => (
           <motion.div
             key={orb.id}
             className={`absolute rounded-full ${orb.color} ${orb.size} opacity-20 mix-blend-multiply filter blur-[100px]`}
             style={{ top: orb.top, left: orb.left }}
-            animate={{
-              x: [0, 40, -40, 0],
-              y: [0, 30, -30, 0],
-              scale: [1, 1.1, 0.9, 1],
-            }}
+            animate={{ x: [0, 40, -40, 0], y: [0, 30, -30, 0], scale: [1, 1.1, 0.9, 1] }}
             transition={{ duration: 15, repeat: Infinity, delay: orb.delay, ease: "easeInOut" }}
           />
         ))}
@@ -87,17 +121,8 @@ export default function FloatingBackground() {
             key={`dust-${i}`}
             className="absolute w-1.5 h-1.5 bg-yellow-300 rounded-full blur-[1px] shadow-[0_0_10px_#fde047]"
             initial={{ top: '110%', left: `${Math.random() * 100}%` }}
-            animate={{ 
-              top: '-10%', 
-              x: [0, Math.random() * 80 - 40, 0],
-              opacity: [0, 0.8, 1, 0] 
-            }}
-            transition={{ 
-              duration: 10 + Math.random() * 10, 
-              repeat: Infinity, 
-              delay: Math.random() * 5, 
-              ease: "easeInOut" 
-            }}
+            animate={{ top: '-10%', x: [0, Math.random() * 80 - 40, 0], opacity: [0, 0.8, 1, 0] }}
+            transition={{ duration: 10 + Math.random() * 10, repeat: Infinity, delay: Math.random() * 5, ease: "easeInOut" }}
           />
         ))}
 
@@ -106,11 +131,7 @@ export default function FloatingBackground() {
             key={char.id}
             className={`absolute ${char.size} opacity-90 drop-shadow-2xl`}
             style={{ top: char.top, left: char.left }}
-            animate={{
-              y: [0, -30, 0], 
-              x: [mousePos.x, mousePos.x + 15, mousePos.x - 15, mousePos.x],
-              rotate: [-10, 10, -10], 
-            }}
+            animate={{ y: [0, -30, 0], x: [mousePos.x, mousePos.x + 15, mousePos.x - 15, mousePos.x], rotate: [-10, 10, -10] }}
             transition={{ duration: char.duration, repeat: Infinity, delay: char.delay, ease: "easeInOut" }}
           >
             {char.emoji}
@@ -122,12 +143,7 @@ export default function FloatingBackground() {
             key={el.id}
             className={`absolute ${el.color} ${el.opacity} ${el.blur}`}
             style={{ top: el.top, left: el.left }}
-            animate={{
-              y: [0, -20, 0],
-              x: [-mousePos.x, -mousePos.x + 10, -mousePos.x - 10, -mousePos.x],
-              rotate: [0, 45, -45, 0],
-              scale: [1, 1.1, 0.9, 1],
-            }}
+            animate={{ y: [0, -20, 0], x: [-mousePos.x, -mousePos.x + 10, -mousePos.x - 10, -mousePos.x], rotate: [0, 45, -45, 0], scale: [1, 1.1, 0.9, 1] }}
             transition={{ duration: 8, repeat: Infinity, delay: el.delay, ease: "easeInOut" }}
           >
             <el.Icon size={el.size} fill={el.Icon === Heart || el.Icon === Star ? 'currentColor' : 'none'} />
@@ -147,44 +163,29 @@ export default function FloatingBackground() {
         {[...Array(4)].map((_, i) => (
           <motion.div
             key={`star-${i}`}
-            
             className="absolute flex items-center pointer-events-none"
-            initial={{ 
-              top: `${-10 + Math.random() * 30}%`, 
-              left: `${80 + Math.random() * 40}%`, 
-              rotate: -35 - Math.random() * 10,    
-            }}
-            animate={{ 
-              top: `${100 + Math.random() * 20}%`,  
-              left: `${-20 - Math.random() * 20}%`, 
-              opacity: [0, 1, 1, 0] 
-            }}
-            transition={{ 
-              duration: 2 + Math.random() * 1.5, 
-              repeat: Infinity, 
-              repeatDelay: 1 + Math.random() * 5, 
-              ease: "linear" 
-            }}
+            initial={{ top: `${-10 + Math.random() * 30}%`, left: `${80 + Math.random() * 40}%`, rotate: -35 - Math.random() * 10 }}
+            animate={{ top: `${100 + Math.random() * 20}%`, left: `${-20 - Math.random() * 20}%`, opacity: [0, 1, 1, 0] }}
+            transition={{ duration: 2 + Math.random() * 1.5, repeat: Infinity, repeatDelay: 1 + Math.random() * 5, ease: "linear" }}
           >
             <div className="w-2 h-2 sm:w-3 sm:h-3 bg-white rounded-full shadow-[0_0_20px_6px_#f472b6] z-10" />
-            
             <div className="h-[2px] sm:h-[3px] w-[200px] sm:w-[300px] bg-gradient-to-l from-transparent via-pink-400 to-white -ml-[2px]" />
           </motion.div>
         ))}
       </div>
 
-      {/* TRÌNH PHÁT NHẠC NỀN GÓC MÀN HÌNH */}
       <div className="fixed top-6 right-6 z-50">
-        <audio ref={audioRef} src="/bgm.mp3" loop>
+        {/* ĐÃ THÊM: playsInline và preload="auto" để trị bệnh iOS */}
+        <audio ref={audioRef} src="/bgm.mp3" playsInline preload="auto" loop>
           <track kind="captions" src="/bgm-captions.vtt" srcLang="en" label="English" />
         </audio>
+        
         <motion.button
           onClick={toggleMusic}
           whileHover={{ scale: 1.1 }}
           whileTap={{ scale: 0.9 }}
-          className={`flex items-center justify-center w-12 h-12 rounded-full shadow-lg backdrop-blur-md border border-white/40 transition-all cursor-pointer ${
-            isPlaying ? 'bg-pink-100/90 text-pink-600 shadow-pink-300/50' : 'bg-white/60 text-gray-500 hover:text-pink-500'
-          }`}
+          className="flex items-center justify-center w-12 h-12 rounded-full shadow-lg backdrop-blur-md border border-white/40 transition-all cursor-pointer"
+          style={isPlaying ? { backgroundColor: 'rgba(252, 231, 243, 0.9)', color: '#db2777', boxShadow: '0 4px 6px -1px rgba(244, 114, 182, 0.5)' } : { backgroundColor: 'rgba(255, 255, 255, 0.6)', color: '#6b7280' }}
         >
           {isPlaying ? (
             <motion.div animate={{ rotate: 360 }} transition={{ duration: 4, repeat: Infinity, ease: "linear" }}>
