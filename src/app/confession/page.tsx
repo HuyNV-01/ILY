@@ -1,7 +1,7 @@
 /** biome-ignore-all lint/suspicious/noArrayIndexKey: <explanation> */
 'use client';
 
-import { useState, useEffect, useRef } from 'react';
+import { useState, useEffect } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { Heart, Send, BookHeart } from 'lucide-react';
 import confetti from 'canvas-confetti';
@@ -14,7 +14,8 @@ const STORY_LINES = [
   "Mỗi ngày được trò chuyện cùng em là một ngày vui của anh. Mỗi lần nhìn thấy em, anh lại cảm thấy hạnh phúc hơn. 😊",
   "Anh không giỏi ăn nói, hay vụng về, cũng không biết làm ảo thuật, đôi lúc anh còn chọc em cáu... 🎩",
   "Nhưng anh vẫn luôn ở đây, lắng nghe và bên cạnh em mỗi khi em buồn hay vui. Ai cũng có những câu chuyện, nhưng em hãy tin tưởng anh hơn mỗi ngày nhé! Để anh được quan tâm, lo lắng, sẻ chia và yêu thương em nhiều hơn nha! 🥰",
-  "Chuyến hàng trình của cuộc đời anh đang thiếu một vị nhân vật VIP... Anh muốn mời em lên cùng anh, để chúng ta cùng nhau trải nghiệm những cung đường mới. Anh sẽ luôn bên cạnh em dù trời nắng hay mưa, đi cùng em trên mọi nẻo đường. 🚍",
+  "Chuyến hành trình của cuộc đời anh đang thiếu một vị nhân vật VIP... Anh muốn mời em lên cùng anh, để chúng ta cùng nhau trải nghiệm những cung đường mới. Anh sẽ luôn bên cạnh em dù trời nắng hay mưa, đi cùng em trên mọi nẻo đường. 🚍",
+  "Có những lời anh thật khó diễn tả nhưng những cảm xúc và suy nghĩ với mong muốn có em đồng hành là những điều anh muốn nói với sự chân thành anh có. Anh thực sự đã nghĩ rất nhiều bởi đi kèm lời nói là sự cam kết đồng hành. Anh sẽ không rời đi, vẫn sẽ luôn nắm chặt tay em miễn là em vẫn còn giữ lấy tay anh! 🤝",
   "Em làm người yêu anh nhé? 💖"
 ];
 
@@ -99,7 +100,7 @@ export default function Confession() {
   const isLastStep = step === STORY_LINES.length - 1;
 
   return (
-    <main className="min-h-[100dvh] flex flex-col items-center justify-center  p-4 relative overflow-hidden font-sans">
+    <main className="min-h-[100dvh] flex flex-col items-center justify-center p-4 relative overflow-hidden font-sans">
       
       <CuteDecorations />
 
@@ -111,12 +112,10 @@ export default function Confession() {
             animate={{ opacity: 1, y: 0, rotateX: 0 }}
             exit={{ opacity: 0, scale: 0.9, y: -50 }}
             transition={{ duration: 0.8, type: "spring" }}
-            // Thiết kế cuốn sổ/nhật ký
             className="w-full max-w-2xl bg-[#fffefc] rounded-r-3xl rounded-l-lg shadow-2xl border border-[#e5e0d8] relative z-10 flex flex-col sm:flex-row overflow-hidden"
           >
             {/* Phần gáy sách (Binding) */}
             <div className="w-full sm:w-12 bg-[#f4ece1] sm:border-r border-b sm:border-b-0 border-[#dcd3c6] flex sm:flex-col items-center justify-center gap-4 py-3 sm:py-0 relative">
-              {/* Lỗ đóng gáy sách */}
               {[...Array(5)].map((_, i) => (
                 <div key={i} className="w-4 h-4 rounded-full bg-[#eaddce] shadow-inner border border-[#d2c6b6] hidden sm:block"></div>
               ))}
@@ -147,7 +146,8 @@ export default function Confession() {
                   onAnimationComplete={() => setIsTyping(false)}
                   className="inline"
                 >
-                  {STORY_LINES[step].split("").map((char, index) => (
+                  {/* ĐÃ SỬA LỖI Ở ĐÂY: Dùng Array.from thay cho .split("") để giữ nguyên vẹn Emoji */}
+                  {Array.from(STORY_LINES[step]).map((char, index) => (
                     <motion.span key={`${step}-${index}`} variants={letterVariants}>
                       {char}
                     </motion.span>
