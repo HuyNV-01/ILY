@@ -30,7 +30,7 @@ export default function FloatingBackground() {
     const audio = audioRef.current;
     
     if (audio) {
-      audio.volume = 0.1;
+      audio.volume = 0.5;
 
       // Desktop: Cố gắng phát nhạc tự động nếu trình duyệt cho phép
       audio.play().catch(() => {
